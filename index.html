@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Live input record and playback</title>
+        <style type='text/css'>
+            ul {
+                list-style: none;
+            }
+
+            #recordingslist audio {
+                display: block;
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+<body>
+    <h1>Sparksammy VC</h1>
+
+
+    <!-- Draw the action buttons -->
+    <input type="text" id="uid" value="ROBLOX user id"></input>
+    <button id="start-btn">Start recording</button>
+    <button id="stop-btn" disabled>Stop recording</button>
+    <button id="submit-btn" disabled>Submit recording</button>
+    <a id="downloadEl"></a>
+    <div id="result"></div>
+    <script>
+
+function createAudioElement(blobUrl) {
+    const downloadEl = document.createElement('a');
+    downloadEl.style = 'display: block';
+    downloadEl.innerHTML = 'download';
+    downloadEl.download = 'audio.wav';
+    downloadEl.href = blobUrl;
+    const audioEl = document.createElement('audio');
+    audioEl.controls = true;
+    const sourceEl = document.createElement('source');
+    sourceEl.src = blobUrl;
+    sourceEl.type = 'audio/wav';
+    audioEl.appendChild(sourceEl);
+    document.body.appendChild(audioEl);
+    document.body.appendChild(downloadEl);
+}
+// request permission to access audio stream
+navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    // store streaming data chunks in array
+    const chunks = [];
+    // create media recorder instance to initialize recording
+    const recorder = new MediaRecorder(stream);
+    // function to be called when data is received
+    recorder.ondataavailable = e => {
+      // add stream data to chunks
+      chunks.push(e.data);
+      // if recorder is 'inactive' then recording has finished
+      if (recorder.state == 'inactive') {
+          // convert stream data chunks to a 'webm' audio format as a blob
+          const blob = new Blob(chunks, { type: 'audio/wav' });
+          // convert blob to URL so it can be assigned to a audio src attribute
+          createAudioElement(URL.createObjectURL(blob));
+      }
+    };
+    document.getElementById("start-btn").addEventListener("click", function(){
+        recorder.start(500);
+        document.getElementById("stop-btn").disabled = false;
+        document.getElementById("submit-btn").disabled = true;
+        document.getElementById("start-btn").disabled = true;
+    }, false);
+
+    document.getElementById("stop-btn").addEventListener("click", function(){
+        recorder.stop();
+        document.getElementById("start-btn").disabled = false;
+        document.getElementById("submit-btn").disabled = false;
+        document.getElementById("stop-btn").disabled = true;
+    }, false);
+
+    document.getElementById("submit-btn").addEventListener("click", function(){
+        let formdata = new FormData();
+        formdata.append('file', blob);
+        $.ajax({
+            url: `/vc/uploadAndProcess?uid=${document.getElementById("uid").value}`,
+            type: "POST",
+            data: data,
+            enctype: 'multipart/form-data',
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                document.getElementById("result").innerHTML = 'Result: Upload successful';
+            },
+            error: function(e) {
+                document.getElementById("result").innerHTML = 'Result: Error occurred: ' + e.message;
+            }
+        });
+    }, false);
+}).catch(console.log("error i guess"))
+    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+</body>
+</html>
