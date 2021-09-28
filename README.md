@@ -12,4 +12,4 @@ Basic ROBLOX voice chat. Made for HotStuff6660.
 1. run "node index.js"
 2. insert the script from the client folder to your game inside startercharacterscripts
 3. edit the url so it matches your server, not mine.
-4. also in startercharacterscripts, put a 1000hz sound called "forAThousand" (no quotes)
+4. also in startercharacterscripts, put a 1 second long 1000hz sinewave sound called "forAThousand" (no quotes)
