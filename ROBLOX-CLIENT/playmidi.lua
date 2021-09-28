@@ -13,6 +13,7 @@ local divider = 100 --we divide notes by 100 to make the 1000 roblox sound into 
 local char = script.Parent
 local plr = game.Players:FindFirstChild(char.Name)
 
+while wait(6) do
 local toneJSON = HttpService:GetAsync(baseurl .. plr.UserId)
 
 if (toneJSON != toneJSONOld) then
@@ -32,3 +33,4 @@ if (toneJSON != toneJSONOld) then
 end
 
 toneJSONOld = HttpService:GetAsync(baseurl .. plr.UserId)
+end
