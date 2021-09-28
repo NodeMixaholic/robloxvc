@@ -1,5 +1,5 @@
 # robloxvc
-Basic ROBLOX voice chat
+Basic ROBLOX voice chat. Made for HotStuff6660.
 
 ## REQUIRED:
 * Python3.8 or 3.9 and https://github.com/NFJones/audio-to-midi/releases
